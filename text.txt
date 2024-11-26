@@ -1,0 +1,1 @@
+ssh -i "C:\Users\aloka\OneDrive\Desktop\programmes\project-key.pem" ec2-user@43.204.140.13

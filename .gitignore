@@ -1,0 +1,14 @@
+# Node.js dependencies
+frontend/node_modules/
+
+# Python virtual environment
+backend/venv/
+
+# Flask/React build artifacts
+backend/__pycache__/
+backend/*.pyc
+backend/static/
+frontend/build/
+
+# Logs
+*.log
