@@ -1,1 +1,3 @@
 ssh -i "C:\Users\aloka\OneDrive\Desktop\programmes\project-key.pem" ec2-user@43.204.140.13
+git config --global user.name "Alok Anand"
+git config --global user.email "alokanand180202@gmail.com"
