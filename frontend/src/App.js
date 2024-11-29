@@ -2,35 +2,43 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function CodeAnalyzer() {
-    const [code, setCode] = useState('');
+    const [codeSnippet, setCodeSnippet] = useState('');
     const [suggestions, setSuggestions] = useState([]);
+    const [error, setError] = useState('');
 
-    const handleAnalyze = () => {
-        axios.post('http://127.0.0.1:5000/analyze', { code })
+    const handleAnalyzeCode = () => {
+        setError('');
+        axios.post('http://localhost:5000/analyze', { code: codeSnippet })
             .then(response => {
-                setSuggestions(response.data.suggestions);
+                setSuggestions(response.data.suggestions || []);
             })
             .catch(error => {
-                console.error("There was an error analyzing the code!", error);
+                console.error('Error analyzing code:', error);
+                setError('There was an error analyzing the code. Please try again.');
             });
     };
 
     return (
-        <div>
+        <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+            <h1>Code Review Assistant</h1>
             <textarea
-                value={code}
-                onChange={e => setCode(e.target.value)}
-                placeholder="Enter your code here"
+                rows="8"
+                cols="50"
+                value={codeSnippet}
+                onChange={(e) => setCodeSnippet(e.target.value)}
+                placeholder="Paste your code snippet here..."
             />
-            <button onClick={handleAnalyze}>Analyze Code</button>
-            <div>
-                <h3>Suggestions:</h3>
-                <ul>
-                    {suggestions.map((suggestion, index) => (
-                        <li key={index}>{suggestion}</li>
-                    ))}
-                </ul>
-            </div>
+            <br />
+            <button onClick={handleAnalyzeCode} style={{ margin: '10px' }}>
+                Analyze Code
+            </button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <h2>Suggestions:</h2>
+            <ul>
+                {suggestions.map((suggestion, index) => (
+                    <li key={index}>{suggestion}</li>
+                ))}
+            </ul>
         </div>
     );
 }

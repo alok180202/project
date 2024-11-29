@@ -9,6 +9,6 @@ backend/__pycache__/
 backend/*.pyc
 backend/static/
 frontend/build/
-
+backend/.env
 # Logs
 *.log
