@@ -1,26 +1,48 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import axios from 'axios';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    let disposable = vscode.commands.registerCommand('codereviewassistant.analyzeCode', async () => {
+        const editor = vscode.window.activeTextEditor;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "codereviewassistant" is now active!');
+        if (editor) {
+            const codeSnippet = editor.document.getText(editor.selection);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('codereviewassistant.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from CodeReviewAssistant!');
-	});
+            if (!codeSnippet.trim()) {
+                vscode.window.showErrorMessage("Please select some code to analyze.");
+                return;
+            }
 
-	context.subscriptions.push(disposable);
+            vscode.window.showInformationMessage("Analyzing your code...");
+
+            try {
+                const response = await axios.post('http://127.0.0.1:5000/analyze', {
+                    code: codeSnippet
+                });
+
+                const suggestions = response.data.suggestions.join("\n");
+                vscode.window.showInformationMessage("Code Analysis Complete!");
+                vscode.window.showInformationMessage(suggestions);
+
+                // Display suggestions in a new output channel
+                const outputChannel = vscode.window.createOutputChannel("Code Review Suggestions");
+                outputChannel.appendLine("Suggestions:");
+                outputChannel.appendLine(suggestions);
+                outputChannel.show();
+            } catch (error) {
+                if (error instanceof Error) {
+                    vscode.window.showErrorMessage("Error analyzing code: " + error.message);
+                } else {
+                    vscode.window.showErrorMessage("An unknown error occurred.");
+                }
+            }
+            
+        } else {
+            vscode.window.showErrorMessage("No active editor found.");
+        }
+    });
+
+    context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
