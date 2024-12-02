@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
-import * as path from "path";
+import axios from "axios";
 
 export function activate(context: vscode.ExtensionContext) {
+  const outputChannel = vscode.window.createOutputChannel("Code Review Assistant");
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("codereviewassistant.analyzeCurrentFile", () => {
+    vscode.commands.registerCommand("codereviewassistant.analyzeCurrentFile", async () => {
       const editor = vscode.window.activeTextEditor;
 
       if (!editor) {
@@ -13,68 +15,49 @@ export function activate(context: vscode.ExtensionContext) {
 
       const code = editor.document.getText(); // Get the code from the current file
 
-      // Create and show the webview panel
-      const panel = vscode.window.createWebviewPanel(
-        "codeReviewAssistant",
-        "Code Review Assistant",
-        vscode.ViewColumn.One,
-        {
-          enableScripts: true,
-          localResourceRoots: [
-            vscode.Uri.file(
-              path.join(context.extensionPath, "webview", "static")
-            )
-          ]
-        }
-      );
+      // Clear previous output and initialize loading animation
+      outputChannel.clear();
+      outputChannel.show();
+      outputChannel.appendLine("### Code Review Assistant ###");
+      outputChannel.appendLine("Analyzing your code...");
+      outputChannel.appendLine(" ");
 
-      // Set the HTML content for the webview
-      panel.webview.html = getWebviewContent(panel.webview, context.extensionPath);
-
-      // Post the code to the webview
-      setTimeout(() => {
-        panel.webview.postMessage({ type: "analyzeCode", code });
+      // Simulate a loading spinner
+      let loading = true;
+      const spinner = setInterval(() => {
+        if (loading) outputChannel.append(".");
       }, 500);
+
+      try {
+        // Send the code to the backend for analysis
+        const response = await axios.post("http://127.0.0.1:5000/analyze", { code });
+
+        const { corrected_code, suggestions } = response.data;
+
+        // Stop the loading spinner
+        clearInterval(spinner);
+        loading = false;
+
+        // Display the results
+        outputChannel.appendLine("\n");
+        outputChannel.appendLine("### Optimal Code ###\n");
+        outputChannel.appendLine(corrected_code.replace(/^```.*\n|```$/g, "")); // Remove markdown code block markers
+        outputChannel.appendLine("\n");
+
+        outputChannel.appendLine("### Suggestions ###");
+        suggestions.forEach((suggestion: string, index: number) =>
+          outputChannel.appendLine(`\n${index + 1}. ${suggestion.replace(/^\*\s\*\*/, "").replace(/\*\*$/, "")}`)
+        );
+
+        outputChannel.appendLine("\n### End of Output ###");
+      } catch (error) {
+        clearInterval(spinner);
+        loading = false;
+        outputChannel.appendLine("\nError analyzing the code. Please check if the backend is running.");
+        console.error(error);
+      }
     })
   );
-}
-
-function getWebviewContent(webview: vscode.Webview, extensionPath: string): string {
-  const scriptUri = webview.asWebviewUri(
-    vscode.Uri.file(
-      path.join(extensionPath, "webview", "static", "js", "main.408d26ab.js")
-    )
-  );
-
-  const cssUri = webview.asWebviewUri(
-    vscode.Uri.file(
-      path.join(extensionPath, "webview", "static", "css", "main.1b1a381a.css")
-    )
-  );
-
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Code Review Assistant</title>
-      <link rel="stylesheet" href="${cssUri}">
-      <script>
-        const vscode = acquireVsCodeApi();
-        window.addEventListener('message', (event) => {
-          if (event.data.type === 'analyzeCode') {
-            console.log('Code received in webview:', event.data.code);
-          }
-        });
-      </script>
-    </head>
-    <body>
-      <div id="root"></div>
-      <script src="${scriptUri}"></script>
-    </body>
-    </html>
-  `;
 }
 
 export function deactivate() {}

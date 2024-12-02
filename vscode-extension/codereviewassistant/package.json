@@ -3,6 +3,10 @@
   "displayName": "CodeReviewAssistant",
   "description": "AI assisted code review assistant",
   "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alok180202/project.git"
+  },
   "engines": {
     "vscode": "^1.95.0"
   },
