@@ -2,22 +2,20 @@
   "name": "codereviewassistant",
   "displayName": "CodeReviewAssistant",
   "description": "AI assisted code review assistant",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.95.0"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "activationEvents": [
-    "onCommand:codereviewassistant.analyzeCode"
+    "onCommand:codereviewassistant.analyzeCurrentFile"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "codereviewassistant.analyzeCode",
-        "title": "Analyze Code with AI"
+        "command": "codereviewassistant.analyzeCurrentFile",
+        "title": "Analyze Current File"
       }
     ]
   },

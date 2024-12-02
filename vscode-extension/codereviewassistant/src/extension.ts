@@ -1,48 +1,80 @@
-import * as vscode from 'vscode';
-import axios from 'axios';
+import * as vscode from "vscode";
+import * as path from "path";
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('codereviewassistant.analyzeCode', async () => {
-        const editor = vscode.window.activeTextEditor;
+  context.subscriptions.push(
+    vscode.commands.registerCommand("codereviewassistant.analyzeCurrentFile", () => {
+      const editor = vscode.window.activeTextEditor;
 
-        if (editor) {
-            const codeSnippet = editor.document.getText(editor.selection);
+      if (!editor) {
+        vscode.window.showErrorMessage("No active editor found.");
+        return;
+      }
 
-            if (!codeSnippet.trim()) {
-                vscode.window.showErrorMessage("Please select some code to analyze.");
-                return;
-            }
+      const code = editor.document.getText(); // Get the code from the current file
 
-            vscode.window.showInformationMessage("Analyzing your code...");
-
-            try {
-                const response = await axios.post('http://127.0.0.1:5000/analyze', {
-                    code: codeSnippet
-                });
-
-                const suggestions = response.data.suggestions.join("\n");
-                vscode.window.showInformationMessage("Code Analysis Complete!");
-                vscode.window.showInformationMessage(suggestions);
-
-                // Display suggestions in a new output channel
-                const outputChannel = vscode.window.createOutputChannel("Code Review Suggestions");
-                outputChannel.appendLine("Suggestions:");
-                outputChannel.appendLine(suggestions);
-                outputChannel.show();
-            } catch (error) {
-                if (error instanceof Error) {
-                    vscode.window.showErrorMessage("Error analyzing code: " + error.message);
-                } else {
-                    vscode.window.showErrorMessage("An unknown error occurred.");
-                }
-            }
-            
-        } else {
-            vscode.window.showErrorMessage("No active editor found.");
+      // Create and show the webview panel
+      const panel = vscode.window.createWebviewPanel(
+        "codeReviewAssistant",
+        "Code Review Assistant",
+        vscode.ViewColumn.One,
+        {
+          enableScripts: true,
+          localResourceRoots: [
+            vscode.Uri.file(
+              path.join(context.extensionPath, "webview", "static")
+            )
+          ]
         }
-    });
+      );
 
-    context.subscriptions.push(disposable);
+      // Set the HTML content for the webview
+      panel.webview.html = getWebviewContent(panel.webview, context.extensionPath);
+
+      // Post the code to the webview
+      setTimeout(() => {
+        panel.webview.postMessage({ type: "analyzeCode", code });
+      }, 500);
+    })
+  );
+}
+
+function getWebviewContent(webview: vscode.Webview, extensionPath: string): string {
+  const scriptUri = webview.asWebviewUri(
+    vscode.Uri.file(
+      path.join(extensionPath, "webview", "static", "js", "main.408d26ab.js")
+    )
+  );
+
+  const cssUri = webview.asWebviewUri(
+    vscode.Uri.file(
+      path.join(extensionPath, "webview", "static", "css", "main.1b1a381a.css")
+    )
+  );
+
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Code Review Assistant</title>
+      <link rel="stylesheet" href="${cssUri}">
+      <script>
+        const vscode = acquireVsCodeApi();
+        window.addEventListener('message', (event) => {
+          if (event.data.type === 'analyzeCode') {
+            console.log('Code received in webview:', event.data.code);
+          }
+        });
+      </script>
+    </head>
+    <body>
+      <div id="root"></div>
+      <script src="${scriptUri}"></script>
+    </body>
+    </html>
+  `;
 }
 
 export function deactivate() {}
