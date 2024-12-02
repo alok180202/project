@@ -30,7 +30,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       try {
         // Send the code to the backend for analysis
-        const response = await axios.post("http://127.0.0.1:5000/analyze", { code });
+        const response = await axios.post("http://3.110.166.206:5000/analyze", { code });
+
 
         const { corrected_code, suggestions } = response.data;
 

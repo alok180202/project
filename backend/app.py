@@ -70,5 +70,6 @@ def serve_react_app(path):
         return send_from_directory(BUILD_DIR, "index.html")
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
