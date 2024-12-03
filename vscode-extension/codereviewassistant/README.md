@@ -1,78 +1,84 @@
 # CodeReviewAssistant
 
-CodeReviewAssistant is an AI-powered code review tool designed as a Visual Studio Code extension. It assists developers in analyzing and improving their code by offering optimal corrections and actionable suggestions.
+**CodeReviewAssistant** is an AI-powered Visual Studio Code extension that empowers developers by analyzing and optimizing code. It provides actionable suggestions and generates cleaner, more efficient code to help you improve your coding workflow.
 
 ---
 
-## 🚀 Features
+## Features
 
-- **Code Analysis**: Analyze the currently open file for potential issues and improvements.
-- **Optimal Code Suggestions**: Receive the best version of your code after analysis.
-- **Actionable Feedback**: Get recommendations for enhancements such as better error handling, variable naming, modularity, and more.
-- **Integrated Output**: Displays analysis results directly in the VS Code Output tab.
-
----
-
-## 📋 Requirements
-
-- **Backend**: Flask-based Python backend running at `http://127.0.0.1:5000`.
-- **Frontend**: React-based webview files integrated within the extension.
-- **Environment**:
-  - **Node.js** (for extension development and builds)
-  - **Python 3.8+** (for backend API)
-  - **Dependencies**:
-    - Flask
-    - Axios (for extension-backend communication)
+- **Code Analysis**: Reviews the currently active file for areas of improvement.
+- **Optimized Code Suggestions**: Delivers the best version of your code based on AI-driven analysis.
+- **Actionable Feedback**: Offers detailed insights, such as improving error handling, enhancing modularity, and refining variable naming.
+- **Integrated Results**: Displays results directly in the **Output** tab for a seamless experience.
+- **Command Palette Integration**: Quickly access the extension’s features through the VS Code Command Palette.
 
 ---
 
-## 🛠️ Installation
+## How to Use
 
-### Step-by-Step Instructions:
+### Run the Extension
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/alok180202/project.git
-2. **Install backend dependencies**:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-3. **Install extension dependencies**:
-   ```bash
-   cd ../vscode-extension
-   npm install
-4. **Start the backend server**:
-   ```bash
-   cd ../backend
-   python app.py
-5. **Launch the extension**:
-   - Open the vscode-extension folder in Visual Studio Code.
-   - Run the "Run Extension" command from the VS Code debug panel.
+1. Open a code file you want to analyze in Visual Studio Code.
+2. Launch the **Command Palette**:
+   - Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (macOS).
+3. Search for and execute the command:
+4. The analysis results, including **optimal code suggestions** and **detailed feedback**, will appear in the **Output** tab under the "Code Review Assistant" section.
 
 ---
-## 🖱️ Extension Commands
-This extension contributes the following commands:
-- codereviewassistant.analyzeCurrentFile: Analyzes the currently active file in the editor.
----
-## ⚠️ Known Issues
-- Ensure the backend is running before using the extension. Otherwise, communication with the backend may fail.
-- Output formatting issues might occur for non-standard code snippets.
----
-## 📝 Release Notes
-- **0.0.2**
-  - Added Flask API backend integration.
-  - Improved output formatting in the VS Code Output tab.
-  - Fixed bugs in code suggestions.
-- **0.0.1**
-  - Initial release with core functionality.
----
-## 📄 License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+
+## Why Use CodeReviewAssistant?
+
+- **Time-Saving**: Instantly detect and resolve potential issues without leaving your editor.
+- **Improved Code Quality**: Enhance readability, maintainability, and performance with AI-powered insights.
+- **Focus on Development**: Spend more time building and less time debugging or refactoring.
 
 ---
-## 🌐 Repository
 
-- [GitHub Repository](https://github.com/alok180202/project)
+## Extension Commands
+
+This extension provides the following command:
+
+- `CodeReviewAssistant: Analyze Current File`:  
+Analyze the currently active file in your editor for suggestions and optimizations.
+
 ---
 
+## Example Output
 
+When you analyze a file, the results will appear in the **Output** tab, structured as follows:
+
+
+---
+
+## Known Issues
+
+- Ensure a stable backend connection to avoid analysis failures.
+- Non-standard or highly obfuscated code might generate incomplete or irrelevant suggestions.
+
+---
+
+## Release Notes
+
+### 0.0.4
+-Added instructions for using the extension
+
+### 0.0.3
+- Added logo and documentation
+
+### 0.0.2
+- Enhanced output formatting for better readability.
+- Improved backend integration and analysis logic.
+- Fixed minor bugs in suggestion generation.
+
+### 0.0.1
+- Initial release with core functionality, including code analysis and suggestion generation.
+
+---
+
+## Feedback and Contributions
+
+We value your feedback! If you encounter issues or have ideas for new features, feel free to [open an issue](https://github.com/alok180202/project/issues).
+
+---
+
+**Enjoy improving your code with CodeReviewAssistant! 🚀✨**
