@@ -3,7 +3,7 @@
   "name": "codereviewassistant",
   "displayName": "CodeReviewAssistant",
   "description": "AI assisted code review assistant",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "icon": "logo.png",
   "repository": {
     "type": "git",
